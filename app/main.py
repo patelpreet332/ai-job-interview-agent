@@ -284,6 +284,12 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
                 "role": "model"
             }))
 
+            # Match streaming protocol: one logical "turn" ends here so the client
+            # resets currentMessageId and renders the next reply as a new bubble.
+            await websocket.send_text(
+                json.dumps({"turn_complete": True, "interrupted": False})
+            )
+
             print(f"[AGENT]: {reply_text}")
 
     except Exception as e:

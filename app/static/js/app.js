@@ -12,6 +12,7 @@ const ws_url = "ws://" + window.location.host + "/ws/" + sessionId;
 let websocket = null;
 let is_audio = false;
 let currentMessageId = null; // Track the current message ID during a conversation turn
+const VOICE_UI_ENABLED = false; // Hide/disable voice until re-enabled
 
 // Get DOM elements
 const messageForm = document.getElementById("messageForm");
@@ -24,10 +25,18 @@ const startAudioButton = document.getElementById("startAudioButton");
 const stopAudioButton = document.getElementById("stopAudioButton");
 const recordingContainer = document.getElementById("recording-container");
 
+// Disable voice UI (hide buttons + ensure state is text-only).
+if (!VOICE_UI_ENABLED) {
+  is_audio = false;
+  if (startAudioButton) startAudioButton.style.display = "none";
+  if (stopAudioButton) stopAudioButton.style.display = "none";
+  if (recordingContainer) recordingContainer.style.display = "none";
+}
+
 // WebSocket handlers
 function connectWebsocket() {
   // Connect websocket
-  const wsUrl = ws_url + "?is_audio=" + is_audio;
+  const wsUrl = ws_url + "?is_audio=" + (is_audio ? "1" : "0");
   websocket = new WebSocket(wsUrl);
 
   // Handle connection open
@@ -224,88 +233,90 @@ let audioRecorderContext;
 let micStream;
 let isRecording = false;
 
-// Import the audio worklets
-import { startAudioPlayerWorklet } from "./audio-player.js";
-import { startAudioRecorderWorklet } from "./audio-recorder.js";
+if (VOICE_UI_ENABLED) {
+  // Import the audio worklets only when voice UI is enabled.
+  const { startAudioPlayerWorklet } = await import("./audio-player.js");
+  const { startAudioRecorderWorklet } = await import("./audio-recorder.js");
 
-// Start audio
-function startAudio() {
-  // Start audio output
-  startAudioPlayerWorklet().then(([node, ctx]) => {
-    audioPlayerNode = node;
-    audioPlayerContext = ctx;
-  });
-  // Start audio input
-  startAudioRecorderWorklet(audioRecorderHandler).then(
-    ([node, ctx, stream]) => {
-      audioRecorderNode = node;
-      audioRecorderContext = ctx;
-      micStream = stream;
-      isRecording = true;
+  // Start audio
+  function startAudio() {
+    // Start audio output
+    startAudioPlayerWorklet().then(([node, ctx]) => {
+      audioPlayerNode = node;
+      audioPlayerContext = ctx;
+    });
+    // Start audio input
+    startAudioRecorderWorklet(audioRecorderHandler).then(
+      ([node, ctx, stream]) => {
+        audioRecorderNode = node;
+        audioRecorderContext = ctx;
+        micStream = stream;
+        isRecording = true;
+      }
+    );
+  }
+
+  // Stop audio recording
+  function stopAudio() {
+    if (audioRecorderNode) {
+      audioRecorderNode.disconnect();
+      audioRecorderNode = null;
     }
-  );
+
+    if (audioRecorderContext) {
+      audioRecorderContext
+        .close()
+        .catch((err) => console.error("Error closing audio context:", err));
+      audioRecorderContext = null;
+    }
+
+    if (micStream) {
+      micStream.getTracks().forEach((track) => track.stop());
+      micStream = null;
+    }
+
+    isRecording = false;
+  }
+
+  // Start the audio only when the user clicked the button
+  // (due to the gesture requirement for the Web Audio API)
+  startAudioButton.addEventListener("click", () => {
+    startAudioButton.disabled = true;
+    startAudioButton.textContent = "Voice Enabled";
+    startAudioButton.style.display = "none";
+    stopAudioButton.style.display = "inline-block";
+    recordingContainer.style.display = "flex";
+    startAudio();
+    is_audio = true;
+
+    // Add class to messages container to enable audio styling
+    messagesDiv.classList.add("audio-enabled");
+
+    connectWebsocket(); // reconnect with the audio mode
+  });
+
+  // Stop audio recording when stop button is clicked
+  stopAudioButton.addEventListener("click", () => {
+    stopAudio();
+    stopAudioButton.style.display = "none";
+    startAudioButton.style.display = "inline-block";
+    startAudioButton.disabled = false;
+    startAudioButton.textContent = "Enable Voice";
+    recordingContainer.style.display = "none";
+
+    // Remove audio styling class
+    messagesDiv.classList.remove("audio-enabled");
+
+    // Reconnect without audio mode
+    is_audio = false;
+
+    // Only reconnect if the connection is still open
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+      websocket.close();
+      // The onclose handler will trigger reconnection
+    }
+  });
 }
-
-// Stop audio recording
-function stopAudio() {
-  if (audioRecorderNode) {
-    audioRecorderNode.disconnect();
-    audioRecorderNode = null;
-  }
-
-  if (audioRecorderContext) {
-    audioRecorderContext
-      .close()
-      .catch((err) => console.error("Error closing audio context:", err));
-    audioRecorderContext = null;
-  }
-
-  if (micStream) {
-    micStream.getTracks().forEach((track) => track.stop());
-    micStream = null;
-  }
-
-  isRecording = false;
-}
-
-// Start the audio only when the user clicked the button
-// (due to the gesture requirement for the Web Audio API)
-startAudioButton.addEventListener("click", () => {
-  startAudioButton.disabled = true;
-  startAudioButton.textContent = "Voice Enabled";
-  startAudioButton.style.display = "none";
-  stopAudioButton.style.display = "inline-block";
-  recordingContainer.style.display = "flex";
-  startAudio();
-  is_audio = true;
-
-  // Add class to messages container to enable audio styling
-  messagesDiv.classList.add("audio-enabled");
-
-  connectWebsocket(); // reconnect with the audio mode
-});
-
-// Stop audio recording when stop button is clicked
-stopAudioButton.addEventListener("click", () => {
-  stopAudio();
-  stopAudioButton.style.display = "none";
-  startAudioButton.style.display = "inline-block";
-  startAudioButton.disabled = false;
-  startAudioButton.textContent = "Enable Voice";
-  recordingContainer.style.display = "none";
-
-  // Remove audio styling class
-  messagesDiv.classList.remove("audio-enabled");
-
-  // Reconnect without audio mode
-  is_audio = false;
-
-  // Only reconnect if the connection is still open
-  if (websocket && websocket.readyState === WebSocket.OPEN) {
-    websocket.close();
-    // The onclose handler will trigger reconnection
-  }
-});
 
 // Audio recorder handler
 function audioRecorderHandler(pcmData) {
