@@ -34,7 +34,7 @@ This repository contains:
 
 ```mermaid
 flowchart TD
-  U[User in Browser] -->|WebSocket text message| WS[FastAPI WebSocket /ws/{session_id}]
+  U[User in Browser] -->|WebSocket text message| WS[FastAPI WebSocket /ws/:session_id]
   WS -->|enqueue content| ADK[ADK LiveRequestQueue]
   ADK --> RUN[Runner.run_live]
   RUN --> AGENT[Interview Agent + Tools]
