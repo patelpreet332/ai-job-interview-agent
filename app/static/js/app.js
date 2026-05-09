@@ -1,5 +1,5 @@
 /**
- * app.js: JS code for the adk-streaming sample app.
+ * app.js: Browser UI for Job Interview Agent.
  */
 
 /**

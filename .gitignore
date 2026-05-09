@@ -173,6 +173,9 @@ interview_agent.log
 *.log
 sessions/
 session_*.json
+interview_sessions/
+app/interview_sessions/
+interview_*.json
 
 # Database files
 *.db

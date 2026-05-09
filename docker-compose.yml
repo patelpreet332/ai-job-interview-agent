@@ -15,7 +15,7 @@ services:
     stdin_open: true
     tty: true
     restart: unless-stopped
-    
+
   # Optional: Redis for session storage (if using Redis instead of JSON)
   redis:
     image: redis:7-alpine
@@ -27,15 +27,15 @@ services:
     restart: unless-stopped
     profiles:
       - redis
-      
+
   # Optional: PostgreSQL for advanced data storage
   postgres:
     image: postgres:15-alpine
     container_name: interview-agent-db
     environment:
-      POSTGRES_DB: interview_agent
-      POSTGRES_USER: interview_user
-      POSTGRES_PASSWORD: interview_pass
+      POSTGRES_DB: ${POSTGRES_DB:-interview_agent}
+      POSTGRES_USER: ${POSTGRES_USER:-interview_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
