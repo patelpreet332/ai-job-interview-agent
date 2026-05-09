@@ -11,7 +11,6 @@ This repository contains:
 - A Google ADK agent with tools for interview sessions, scoring, and reporting
 - Optional Google Calendar integration for scheduling practice sessions
 
-> Note: **Voice mode is intentionally disabled/hidden** in the current UI to keep the project stable and demo-ready.
 
 ## Features (current)
 
@@ -28,7 +27,6 @@ This repository contains:
 - **AI/LLM**: Google ADK + Gemini (via `GOOGLE_API_KEY`)
 - **Integrations**: Google Calendar API (optional)
 - **Storage**: local JSON files for interview sessions (dev default)
-- **Container**: Docker / Docker Compose (optional)
 
 ## System architecture
 
@@ -114,14 +112,7 @@ See `.env.example`. The key variables are:
 
 - `GOOGLE_API_KEY` (required)
 - `GOOGLE_CALENDAR_ID` (optional; required only if using calendar tools)
-- `LOG_LEVEL`, `LOG_FILE` (optional)
 
-## Docker (optional)
-
-```bash
-docker build -t job-interview-agent .
-docker run --rm -p 8000:8000 --env-file .env job-interview-agent
-```
 
 ## Screenshots
 

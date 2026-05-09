@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎭 Job Interview Roleplay Agent</title>
+    <title>Job Interview Roleplay Agent</title>
     <script src="static/js/app.js" type="module"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -12,18 +12,18 @@
         --primary-color: #0A84FF;         /* Bright Blue for primary actions, user messages */
         --secondary-color: #30D158;       /* Bright Green for voice actions, success */
         --accent-color: #FF453A;          /* Bright Red for stop/alert actions */
-        
+
         --background-color: #1A1A1D;      /* Main page background - very dark gray */
         --container-bg-color: #232627;    /* Chat container, form background */
         --element-bg-color: #2D3032;      /* Agent messages, input fields */
-        
+
         --text-color: #E8EAED;            /* Primary text color - off-white */
         --text-secondary-color: #A0A4A8;  /* Secondary text - for placeholders, subtitles */
         --text-on-accent-color: #FFFFFF;  /* Text on colored buttons/elements */
-        
+
         --border-color-subtle: #3A3E40;   /* Subtle borders for elements */
         --border-color-medium: #4A4E50;   /* Slightly stronger borders */
-        
+
         /* Re-purpose original variables for the new theme */
         --gray-light: var(--element-bg-color);
         --gray-medium: var(--border-color-medium);
@@ -35,13 +35,13 @@
         --border-radius-lg: 12px;
         --disabled-opacity: 0.6;
       }
-      
+
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
-      
+
       body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         background-color: var(--background-color);
@@ -55,7 +55,7 @@
         flex-direction: column; /* Stack header, chat, status */
         min-height: calc(100vh - 40px); /* Full viewport height minus body padding */
       }
-      
+
       header {
         text-align: center;
         margin-bottom: 24px;
@@ -63,14 +63,14 @@
         border-bottom: 1px solid var(--border-color-subtle);
         width: 100%; /* Takes full width of the new body max-width */
       }
-      
+
       h1 {
         font-size: 26px;
         font-weight: 600;
         color: var(--text-color);
         margin-bottom: 8px;
       }
-      
+
       .subtitle {
         font-size: 15px;
         color: var(--text-secondary-color);
@@ -78,7 +78,7 @@
         margin: 0 auto;
         line-height: 1.5;
       }
-      
+
       .chat-container {
         background-color: var(--container-bg-color);
         border-radius: var(--border-radius-lg);
@@ -91,7 +91,7 @@
         flex-direction: column; /* Stack messages and form */
         flex-grow: 1; /* Allows chat container to take available vertical space */
       }
-      
+
       #messages {
         /* Adjusted height to be more dynamic and use more vertical space */
         /* flex-grow allows it to take up space within chat-container */
@@ -120,7 +120,7 @@
       #messages::-webkit-scrollbar-thumb:hover {
         background-color: var(--text-secondary-color);
       }
-      
+
       #messages p {
         margin-bottom: 0;
         padding: 10px 14px;
@@ -129,7 +129,7 @@
         max-width: 80%; /* <-- Adjusted from 88% to control line length in wider view */
         word-wrap: break-word;
       }
-      
+
       .agent-message {
         background-color: var(--gray-light);
         color: var(--text-color);
@@ -137,22 +137,22 @@
         border-radius: var(--border-radius-md);
         animation: fadeIn 0.3s ease-out;
       }
-      
+
       .agent-message ul {
         margin: 10px 0;
         padding-left: 20px;
         list-style-position: outside;
       }
-      
+
       .agent-message li {
         margin: 6px 0;
         line-height: 1.45;
         color: var(--text-color);
       }
-      .agent-message li::marker { 
+      .agent-message li::marker {
         color: var(--text-secondary-color);
       }
-      
+
       .agent-message em {
         color: var(--primary-color);
         font-style: normal;
@@ -161,7 +161,7 @@
         padding: 2px 5px;
         border-radius: var(--border-radius-sm);
       }
-      
+
       .audio-icon {
         display: inline-block;
         width: 16px;
@@ -173,7 +173,7 @@
         background-position: center;
         background-size: contain;
       }
-      
+
       .user-message {
         background-color: var(--primary-color);
         color: var(--text-on-accent-color);
@@ -182,7 +182,7 @@
         border-radius: var(--border-radius-md);
         animation: fadeIn 0.3s ease-out;
       }
-      
+
       #messageForm {
         display: flex;
         gap: 10px;
@@ -191,7 +191,7 @@
         border-top: 1px solid var(--border-color-subtle);
         flex-shrink: 0; /* Prevent form from shrinking when messages area grows */
       }
-      
+
       #message {
         flex: 1;
         padding: 10px 16px;
@@ -211,7 +211,7 @@
         border-color: var(--primary-color);
         box-shadow: 0 0 0 3px rgba(var(--primary-color), 0.3);
       }
-      
+
       button {
         padding: 10px 18px;
         border: none;
@@ -224,7 +224,7 @@
         align-items: center;
         justify-content: center;
       }
-      
+
       #sendButton {
         background-color: var(--primary-color);
         color: var(--text-on-accent-color);
@@ -232,7 +232,7 @@
       #sendButton:hover:not(:disabled) {
         background-color: #0070E0;
       }
-      
+
       #startAudioButton {
         background-color: var(--secondary-color);
         color: var(--text-on-accent-color);
@@ -240,7 +240,7 @@
       #startAudioButton:hover:not(:disabled) {
         background-color: #28B84A;
       }
-      
+
       #stopAudioButton {
         background-color: var(--accent-color);
         color: var(--text-on-accent-color);
@@ -249,7 +249,7 @@
       #stopAudioButton:hover:not(:disabled) {
         background-color: #E03026;
       }
-      
+
       button:disabled {
         background-color: var(--gray-medium) !important;
         color: var(--text-secondary-color) !important;
@@ -259,7 +259,7 @@
       button:active:not(:disabled) {
         transform: translateY(1px);
       }
-      
+
       .status-indicator {
         display: flex;
         align-items: center;
@@ -275,12 +275,12 @@
         width: 100%; /* Makes status indicator take full width of the new body max-width */
         flex-shrink: 0; /* Prevent status from shrinking */
       }
-      
+
       .status-item {
         display: flex;
         align-items: center;
       }
-      
+
       .status-dot {
         width: 9px;
         height: 9px;
@@ -295,8 +295,8 @@
       .status-dot.recording {
         background-color: var(--accent-color);
       }
-      
-      .recording-active { 
+
+      .recording-active {
         position: relative;
       }
       @keyframes pulse-recording {
@@ -304,7 +304,7 @@
         50% { opacity: 0.5; transform: scale(1.2); }
         100% { opacity: 1; transform: scale(1); }
       }
-      
+
       @media (max-width: 768px) { /* Adjusted breakpoint for when stacking occurs */
         body {
           padding: 12px;
@@ -312,7 +312,7 @@
           min-height: calc(100vh - 24px); /* Adjust for new padding */
         }
         /* #messages height already handled by flex-grow in .chat-container */
-        
+
         #messageForm {
           flex-direction: column;
           gap: 8px;
@@ -325,12 +325,12 @@
            max-width: 90%; /* Allow slightly wider messages on smaller, stacked views */
         }
       }
-      
+
       @keyframes fadeIn {
         from { opacity: 0; transform: translateY(8px); }
         to { opacity: 1; transform: translateY(0); }
       }
-      
+
       .typing-indicator {
         display: flex;
         padding: 10px 14px;
@@ -342,11 +342,11 @@
         opacity: 0;
         transition: opacity 0.3s ease;
       }
-      
+
       .typing-indicator.visible {
         opacity: 1;
       }
-      
+
       .typing-indicator span {
         height: 7px;
         width: 7px;
@@ -355,7 +355,7 @@
         display: inline-block;
         margin: 0 2.5px;
       }
-      
+
       .typing-indicator span:nth-child(1) {
         animation: bounce 1.2s infinite 0.2s;
       }
@@ -374,21 +374,21 @@
 
   <body>
     <header>
-      <h1>🎭 Job Interview Roleplay Agent</h1>
+      <h1>Job Interview Roleplay Agent</h1>
       <p class="subtitle">Your Personal Interview Coach - Practice interviews, get feedback, and improve your skills</p>
     </header>
-    
+
     <div class="chat-container">
       <div id="messages">
         <div class="agent-message">
-          <p><span class="audio-icon"></span>👋 Welcome to your personal interview coach! I'm here to help you practice interviews and improve your skills.</p>
+          <p><span class="audio-icon"></span>Welcome to your personal interview coach! I'm here to help you practice interviews and improve your skills.</p>
           <p>I can help you with:</p>
           <ul>
-            <li>🎯 <strong>Behavioral interviews</strong> - Practice STAR method responses</li>
-            <li>💻 <strong>Technical interviews</strong> - Coding challenges and technical knowledge</li>
-            <li>🏗️ <strong>System design</strong> - Architecture and scalability questions</li>
-            <li>📊 <strong>Case studies</strong> - Business problem solving</li>
-            <li>📅 <strong>Schedule mock interviews</strong> - Plan your practice sessions</li>
+            <li><strong>Behavioral interviews</strong> - Practice STAR method responses</li>
+            <li><strong>Technical interviews</strong> - Coding challenges and technical knowledge</li>
+            <li><strong>System design</strong> - Architecture and scalability questions</li>
+            <li><strong>Case studies</strong> - Business problem solving</li>
+            <li><strong>Schedule mock interviews</strong> - Plan your practice sessions</li>
           </ul>
           <p>How would you like to start? You can say something like:</p>
           <p><em>"I want to practice behavioral questions for a software engineer role"</em></p>
@@ -401,15 +401,15 @@
           <span></span>
         </div>
       </div>
-      
+
       <form id="messageForm">
         <input type="text" id="message" name="message" placeholder="Type your message here or ask for interview help..." autocomplete="off" />
         <button type="submit" id="sendButton" disabled>Send</button>
-        <button type="button" id="startAudioButton" style="display:none">🎤 Enable Voice</button>
-        <button type="button" id="stopAudioButton" style="display:none">🛑 Stop Voice</button>
+        <button type="button" id="startAudioButton" style="display:none">Enable Voice</button>
+        <button type="button" id="stopAudioButton" style="display:none">Stop Voice</button>
       </form>
     </div>
-    
+
     <div class="status-indicator">
       <div class="status-item">
         <div id="status-dot" class="status-dot"></div>
